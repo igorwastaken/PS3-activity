@@ -80,15 +80,14 @@ async function sendRequest(config: Config) {
         const game = fetchPopupInfo(url);
         logger.log("[PS3] " + game)
     } catch (e) {
+        logger.error("[PS3] " + e)
         throw e;
     }
 }
 export default {
     onLoad: async () => {
         logger.log("[PS3] Hello world!");
-        setInterval(() => {
-            sendRequest(storage.selections[storage.selected]);
-        }, 1000);
+        await sendRequest(storage.selections[storage.selected]);
     },
     onUnload: () => {
         logger.log("[PS3] Goodbye, world.");
