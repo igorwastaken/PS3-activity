@@ -41,7 +41,8 @@ async function setActivity(activity: Activity) {
             details: activity.details,
             state: activity.state,
             timestamps: activity.timestamps,
-            assets: activity.assets
+            assets: activity.assets,
+            flags: activity.flags
         },
         pid: 1608,
         socketId: "PS3Activity@Vendetta"
@@ -73,6 +74,11 @@ async function sendRequest(config: Config) {
     if (typeof config !== "string") throw new Error("You must provide your console ip");
     const url = "http://" + config;
     var response = null;
+    await setActivity({
+        name: "PlayStation",
+        type: ActivityTypes.PLAYING,
+        flags: 1
+    })
     // ping your console
     try {
         response = await fetch(url);
