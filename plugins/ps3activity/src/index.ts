@@ -77,10 +77,10 @@ async function sendRequest(config: Config) {
     try {
         response = await fetch(url);
         if (!response.ok) throw new Error("Cannot ping console");
-        const game = fetchPopupInfo(url);
+        const game = await fetchPopupInfo(url);
         logger.log("[PS3] " + game)
     } catch (e) {
-        logger.error("[PS3] " + e)
+        logger.log("[PS3] " + e)
         throw e;
     }
 }
