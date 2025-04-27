@@ -1,102 +1,104 @@
 import plugin from '@vendetta/plugin';
 import { Activity, Config } from '../../def';
-import { logger } from "@vendetta";
-import Settings from "./Settings";
+import { logger } from '@vendetta';
+import Settings from './Settings';
 import { FluxDispatcher } from '@vendetta/metro/common';
 
 enum ActivityTypes {
-    PLAYING = 0,
-    STREAMING = 1,
-    LISTENING = 2,
-    WATCHING = 3,
-    // CUSTOM = 4,
-    COMPETING = 5
+  PLAYING = 0,
+  STREAMING = 1,
+  LISTENING = 2,
+  WATCHING = 3,
+  COMPETING = 5
 }
 
 const storage = plugin.storage as typeof plugin.storage & {
-    selected: string;
-    selections: Record<string, Config>;
+  selected: string;
+  selections: Record<string, Config>;
 };
 
-if (typeof storage.selected?.length !== "number") {
-    Object.assign(storage, {
-        selected: "default",
-        selections: {
-            default: createDefaultSelection()
-        }
-    });
+if (!storage.selected || !storage.selections[storage.selected]) {
+  storage.selected = 'default';
+  storage.selections = { default: createDefaultSelection() };
 }
+
 function createDefaultSelection(): Config {
-    return {
-        console_ip: "192.168.1.7"
-    }
+  return { console_ip: '192.168.1.7' };
 }
+
+let intervalId: number | null = null;
 
 async function setActivity(activity: Activity) {
-    FluxDispatcher.dispatch({
-        type: 'LOCAL_ACTIVITY_UPDATE',
-        activity: {
-            name: activity.name,
-            type: activity.type,
-            details: activity.details,
-            state: activity.state,
-            timestamps: activity.timestamps,
-            assets: activity.assets,
-            flags: activity.flags
-        },
-        pid: 1608,
-        socketId: "PS3Activity@Vendetta"
-    })
+  FluxDispatcher.dispatch({
+    type: 'LOCAL_ACTIVITY_UPDATE',
+    activity: {
+      name: activity.name,
+      type: activity.type,
+      details: activity.details,
+      state: activity.state,
+      timestamps: activity.timestamps,
+      assets: activity.assets,
+      flags: activity.flags
+    },
+    pid: 1608,
+    socketId: 'PS3Activity@Vendetta'
+  });
 }
-async function fetchPopupInfo(ip: string) {
-    try {
-        const response = await fetch(ip + '/popup.ps3@info15');
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+async function fetchGameInfo(baseUrl: string): Promise<string> {
+  try {
+    const resp = await fetch(`${baseUrl}/popup.ps3@info15`);
+    if (!resp.ok) throw new Error(`Status ${resp.status}`);
+    const text = await resp.text();
+    return text.trim();
+  } catch (e) {
+    logger.log(`[PS3] fetchGameInfo error: ${e}`);
+    return '';
+  }
+}
 
-        const text = await response.text();
+function parseGameName(msg: string): string {
+  // Extrai "Game Title" de mensagens como NPJS12345 "Game Title"
+  const match = msg.match(/"(.+)"/);
+  return match ? match[1] : msg;
+}
 
-        // Transform the plain text into JSON format
-        const result = {
-            message: text.trim()
-        };
+async function updateActivity() {
+  const { console_ip } = storage.selections[storage.selected];
+  const baseUrl = `http://${console_ip}`;
+  try {
+    // Ping para garantir que o console está online
+    const ping = await fetch(baseUrl);
+    if (!ping.ok) throw new Error('Ping failed');
 
-        return result;
-    } catch (error) {
-        console.error('Failed to fetch popup info:', error);
-        return { error: error.message };
+    // Busca o jogo atual
+    const info = await fetchGameInfo(baseUrl);
+    if (!info) {
+      // Se não há jogo, limpa status
+      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
+      return;
     }
+
+    const gameName = parseGameName(info);
+    await setActivity({ name: gameName, type: ActivityTypes.PLAYING, flags: 1 });
+    logger.log(`[PS3] Now playing: ${gameName}`);
+  } catch (e) {
+    logger.log(`[PS3] updateActivity error: ${e}`);
+  }
 }
 
-async function sendRequest(config: Config) {
-    if (typeof config !== "string") throw new Error("You must provide your console ip");
-    const url = "http://" + config;
-    var response = null;
-    await setActivity({
-        name: "PlayStation",
-        type: ActivityTypes.PLAYING,
-        flags: 1
-    })
-    // ping your console
-    try {
-        response = await fetch(url);
-        if (!response.ok) throw new Error("Cannot ping console");
-        const game = await fetchPopupInfo(url);
-        logger.log("[PS3] " + game)
-    } catch (e) {
-        logger.log("[PS3] " + e)
-        throw e;
-    }
-}
 export default {
-    onLoad: async () => {
-        logger.log("[PS3] Hello world!");
-        await sendRequest(storage.selections[storage.selected]);
-    },
-    onUnload: () => {
-        logger.log("[PS3] Goodbye, world.");
-    },
-    settings: Settings,
-}
+  onLoad() {
+    logger.log('[PS3] Plugin loaded');
+    updateActivity();
+    intervalId = setInterval(updateActivity, 15000);
+  },
+
+  onUnload() {
+    logger.log('[PS3] Plugin unloaded');
+    if (intervalId) clearInterval(intervalId);
+    setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
+  },
+
+  settings: Settings
+};
