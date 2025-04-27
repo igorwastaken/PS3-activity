@@ -1,0 +1,14 @@
+{
+    "name": "PS3Activity",
+    "description": "Displays on your profile what you're playing on your PS3",
+    "authors": [
+        {
+            "name": "Igor",
+            "id": "952601931765919794"
+        }
+    ],
+    "main": "src/index.ts",
+    "vendetta": {
+        "icon": "games"
+    }
+}

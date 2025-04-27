@@ -1,0 +1,9 @@
+{
+    "authors": [
+        {
+            "name": "Igor",
+            "id": "952601931765919794"
+        }
+    ],
+    "main": "src/index.ts"
+}

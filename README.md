@@ -1,7 +1,11 @@
-# Vendetta Plugins Template
-This repo contains a template for creating [Vendetta](https://github.com/vendetta-mod/Vendetta) plugins.
+# PlayStation 3 Activity
+Displays what you're playing on your PS3
 
 # How to install?
-Paste a plugin URL into the Plugins page of Vendetta, following a basic format of:
+Paste a plugin URL into the Plugins page of Vendetta / Bunny, following a basic format of:
 
-https://`YOUR_GITHUB_USERNAME`.github.io/`REPO_NAME`/`PLUGIN_NAME`
+https://igorwastaken.github.io/PS3-Activity/ps3activity
+
+# Requirements
+- A PS3 with CFW/HEN and WebMan Mod installed.
+- Games (so it can show what you're playing).
