@@ -3,8 +3,7 @@ import { Activity, Config } from '../../def';
 import { logger } from '@vendetta';
 import Settings from './Settings';
 import { FluxDispatcher } from '@vendetta/metro/common';
-import jsdom from 'jsdom';
-const { JSDOM } = jsdom;
+
 enum ActivityTypes {
   PLAYING = 0,
   STREAMING = 1,
@@ -46,25 +45,18 @@ async function setActivity(activity: Activity) {
   });
 }
 
-async function fetchGameInfo(baseUrl: string): Promise<string> {
+async function fetchGameInfo(baseUrl: string): Promise<HTMLDocument | null> {
   try {
-    const resp = await fetch(`${baseUrl}/popup.ps3@info15`);
+    const resp = await fetch(`${baseUrl}/klic.ps3`);
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const text = await resp.text();
-    const dom = new JSDOM(text);
-    logger.log(text);
-    logger.log(dom);
-    return text.trim();
+    var parser = new DOMParser();
+    var page = parser.parseFromString(text, "text/html");
+    return page;
   } catch (e) {
     logger.log(`[PS3] fetchGameInfo error: ${e}`);
-    return '';
+    return null;
   }
-}
-
-function parseGameName(msg: string): string {
-  // Extrai "Game Title" de mensagens como NPJS12345 "Game Title"
-  const match = msg.match(/"(.+)"/);
-  return match ? match[1] : msg;
 }
 
 async function updateActivity() {
@@ -82,8 +74,10 @@ async function updateActivity() {
       await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
       return;
     }
-
-    const gameName = parseGameName(info);
+    var gameName = "XMB";
+    const getName = info.querySelector("h2").innerText;
+    logger.info(getName);
+    gameName = getName;
     await setActivity({ name: gameName, type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(info);
     logger.log(`[PS3] Now playing: ${gameName}`);
