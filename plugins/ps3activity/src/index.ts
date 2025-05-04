@@ -52,6 +52,7 @@ async function fetchGameInfo(baseUrl: string): Promise<string> {
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const text = await resp.text();
     const parsed = parse(text);
+    logger.log(text);
     logger.log(parsed);
     return text.trim();
   } catch (e) {
