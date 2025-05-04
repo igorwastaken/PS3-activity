@@ -3,7 +3,6 @@ import { Activity, Config } from '../../def';
 import { logger } from '@vendetta';
 import Settings from './Settings';
 import { FluxDispatcher } from '@vendetta/metro/common';
-import { JSDOM } from 'jsdom';
 
 enum ActivityTypes {
   PLAYING = 0,
@@ -46,18 +45,21 @@ async function setActivity(activity: Activity) {
   });
 }
 
-async function fetchGameInfo(baseUrl: string): Promise<any | null> {
+async function fetchGameInfo(baseUrl: string): Promise<string | null> {
   try {
     const resp = await fetch(`${baseUrl}/klic.ps3`);
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const text = await resp.text();
-    var html = new JSDOM(text);
-    logger.info(html.window.document.querySelector("h2"))
-    return html;
+    return text;
   } catch (e) {
     logger.log(`[PS3] fetchGameInfo error: ${e}`);
     return null;
   }
+}
+
+export function getGameName(text: string): string[] {
+  const match = text.match(/<h2>(.*?)<\/H2>/);
+  return match;
 }
 
 async function updateActivity() {
@@ -76,7 +78,7 @@ async function updateActivity() {
       return;
     }
     var gameName = "XMB";
-    const getName = ""
+    const getName = getGameName(info)[0];
     logger.info(getName);
     gameName = getName;
     await setActivity({ name: gameName, type: ActivityTypes.PLAYING, flags: 1 });
