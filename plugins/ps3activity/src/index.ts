@@ -80,6 +80,11 @@ async function updateActivity() {
     }
     var gameName = ["0", "XMB"];
     const getName = getGameName(info)[0];
+    if(!getName) {
+      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1<<0})
+      return;
+    }
+
     logger.info(getName);
     // brainrot code
     gameName = getName
@@ -89,7 +94,7 @@ async function updateActivity() {
     var [prefix, ...nameParts] = gameName;
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
-    await setActivity({ name: gameName[1], assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG` }, type: ActivityTypes.PLAYING, flags: 1 });
+    await setActivity({ name: gameName[1], /*assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix },*/ type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(info);
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
