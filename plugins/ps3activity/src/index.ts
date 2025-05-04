@@ -3,7 +3,7 @@ import { Activity, Config } from '../../def';
 import { logger } from '@vendetta';
 import Settings from './Settings';
 import { FluxDispatcher } from '@vendetta/metro/common';
-import * as cheerio from 'cheerio';
+import * as cheerio from 'cheerio/dist/esm';
 
 enum ActivityTypes {
   PLAYING = 0,
