@@ -32,6 +32,7 @@ async function setActivity(activity: Activity) {
   FluxDispatcher.dispatch({
     type: 'LOCAL_ACTIVITY_UPDATE',
     activity: {
+      application_id: '0',
       name: activity.name,
       type: activity.type,
       /*details: activity.details,
