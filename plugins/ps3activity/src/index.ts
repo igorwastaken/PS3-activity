@@ -3,6 +3,7 @@ import { Activity, Config } from '../../def';
 import { logger } from '@vendetta';
 import Settings from './Settings';
 import { FluxDispatcher } from '@vendetta/metro/common';
+import * as cheerio from 'cheerio';
 
 enum ActivityTypes {
   PLAYING = 0,
@@ -45,14 +46,13 @@ async function setActivity(activity: Activity) {
   });
 }
 
-async function fetchGameInfo(baseUrl: string): Promise<HTMLDocument | null> {
+async function fetchGameInfo(baseUrl: string): Promise<cheerio.CheerioAPI | null> {
   try {
     const resp = await fetch(`${baseUrl}/klic.ps3`);
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const text = await resp.text();
-    var parser = new DOMParser();
-    var page = parser.parseFromString(text, "text/html");
-    return page;
+    var $ = cheerio.load(text);
+    return $;
   } catch (e) {
     logger.log(`[PS3] fetchGameInfo error: ${e}`);
     return null;
@@ -75,7 +75,7 @@ async function updateActivity() {
       return;
     }
     var gameName = "XMB";
-    const getName = info.querySelector("h2").innerText;
+    const getName = info("h2").text();
     logger.info(getName);
     gameName = getName;
     await setActivity({ name: gameName, type: ActivityTypes.PLAYING, flags: 1 });
