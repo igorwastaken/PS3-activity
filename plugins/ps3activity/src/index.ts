@@ -26,7 +26,7 @@ function createDefaultSelection(): Config {
   return { console_ip: '192.168.1.7' };
 }
 
-let intervalId: number | null = null;
+let intervalId = null;
 
 async function setActivity(activity: Activity) {
   FluxDispatcher.dispatch({

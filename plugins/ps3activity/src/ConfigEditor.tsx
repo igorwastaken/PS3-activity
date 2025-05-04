@@ -6,6 +6,7 @@ import { findByProps, findByStoreName } from "@vendetta/metro";
 import { ScrollView } from "react-native";
 import { semanticColors } from "@vendetta/ui";
 import { Button, Forms } from "@vendetta/ui/components";
+import { logger } from "@vendetta";
 
 const { FormSection, FormInput } = Forms
 const profiles = findByProps("showUserProfile");
@@ -22,6 +23,12 @@ const styles = stylesheet.createThemedStyleSheet({
         color: semanticColors.TEXT_LINK,
     }
 });
+
+export async function RingConsole(ip: string) {
+    await fetch(`http://${ip}/buzzer.ps3mapi?snd=2`);
+    logger.log("[PS3] Ring");
+}
+
 export default function ConfigEditor({ selection }: { selection: string }) {
     const settings = useProxy(storage.selections[selection]) as Config;
     return (
@@ -42,6 +49,15 @@ export default function ConfigEditor({ selection }: { selection: string }) {
                     value={settings.console_ip}
                     placeholder="Discord"
                     onChange={v => settings.console_ip = v}
+                />
+                <Button
+                style={{ margin: 16 }}
+                color={"brand"}
+                size={Button.Sizes.MEDIUM}
+                look={Button.Looks.FILLED}
+                onPress={async () => {
+                    RingConsole(settings.console_ip)
+                }}
                 />
             </FormSection>
         </ScrollView>
