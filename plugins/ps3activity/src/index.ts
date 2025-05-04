@@ -34,11 +34,11 @@ async function setActivity(activity: Activity) {
     activity: {
       name: activity.name,
       type: activity.type,
-      details: activity.details,
+      /*details: activity.details,
       state: activity.state,
       timestamps: activity.timestamps,
-      assets: activity.assets,
-      flags: activity.flags
+      assets: activity.assets,*/
+      flags: 1 << 0
     },
     pid: 1608,
     socketId: 'PS3Activity@Vendetta'
@@ -80,7 +80,7 @@ async function updateActivity() {
     var gameName = "XMB";
     const getName = getGameName(info)[0];
     logger.info(getName);
-    gameName = getName;
+    gameName = getName.replace(/<h2>|<\/H2>/, "");
     await setActivity({ name: gameName, type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(info);
     logger.log(`[PS3] Now playing: ${gameName}`);
