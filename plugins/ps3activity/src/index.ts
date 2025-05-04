@@ -68,8 +68,8 @@ export async function fetchPlayTime(baseUrl: string) {
     const resp = await fetch(`${baseUrl}/popup.ps3@info12`);
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const text = await resp.text();
-    const match = text.match(/<\/div>Play\:(.*?)/);
-    return match[0];
+    const match = text.match(/<\/div>Play: (.*?)<div (.*?)>/);
+    return match[1];
   } catch (e) {
     logger.error(e);
     return null;
