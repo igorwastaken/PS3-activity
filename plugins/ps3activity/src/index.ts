@@ -81,6 +81,7 @@ async function updateActivity() {
 
     const gameName = parseGameName(info);
     await setActivity({ name: gameName, type: ActivityTypes.PLAYING, flags: 1 });
+    logger.log(info);
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
     logger.log(`[PS3] updateActivity error: ${e}`);

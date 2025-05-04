@@ -58,6 +58,7 @@ export default function ConfigEditor({ selection }: { selection: string }) {
                 onPress={async () => {
                     RingConsole(settings.console_ip)
                 }}
+                text="Ring console"
                 />
             </FormSection>
         </ScrollView>
