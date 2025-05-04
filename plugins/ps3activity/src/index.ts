@@ -78,13 +78,18 @@ async function updateActivity() {
       await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
       return;
     }
-    var gameName = "XMB";
+    var gameName = ["0", "XMB"];
     const getName = getGameName(info)[0];
     logger.info(getName);
+    // brainrot code
     gameName = getName
                .replace(/<h2>/, "")
-               .replace(/<\/H2>/, "");
-    await setActivity({ name: gameName, type: ActivityTypes.PLAYING, flags: 1 });
+               .replace(/<\/H2>/, "")
+               .split(" ");
+    var [prefix, ...nameParts] = gameName;
+    const namePartsJoin = nameParts.join(" ");
+    gameName = [prefix, namePartsJoin];
+    await setActivity({ name: gameName[1], type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(info);
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
