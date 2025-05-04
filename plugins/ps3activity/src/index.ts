@@ -105,7 +105,8 @@ async function updateActivity() {
     logger.info(getName);
     // brainrot code
     playTime = getPlayTime;
-    console.log(playTime)
+    const date = new Date(playTime).getTime();
+    const calcPlay = Math.floor((Date.now() - date)/1000);
     gameName = getName
       .replace(/<h2>/, "")
       .replace(/<\/H2>/, "")
@@ -113,7 +114,7 @@ async function updateActivity() {
     var [prefix, ...nameParts] = gameName;
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
-    await setActivity({ name: gameName[1], /*assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix },*/ type: ActivityTypes.PLAYING, flags: 1 });
+    await setActivity({ name: gameName[1], timestamps: { start: calcPlay }, /*assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix },*/ type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(info);
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
