@@ -89,7 +89,7 @@ async function updateActivity() {
     var [prefix, ...nameParts] = gameName;
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
-    await setActivity({ name: gameName[1], assets: { large_image: `http://${console_ip}/dev_hdd0/game//${prefix}/ICON0.PNG` }, type: ActivityTypes.PLAYING, flags: 1 });
+    await setActivity({ name: gameName[1], assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG` }, type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(info);
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
