@@ -3,6 +3,7 @@ import { Activity, Config } from '../../def';
 import { logger } from '@vendetta';
 import Settings from './Settings';
 import { FluxDispatcher } from '@vendetta/metro/common';
+import parse from 'node-html-parser';
 
 enum ActivityTypes {
   PLAYING = 0,
@@ -50,6 +51,8 @@ async function fetchGameInfo(baseUrl: string): Promise<string> {
     const resp = await fetch(`${baseUrl}/popup.ps3@info15`);
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const text = await resp.text();
+    const parsed = parse(text);
+    logger.log(parsed);
     return text.trim();
   } catch (e) {
     logger.log(`[PS3] fetchGameInfo error: ${e}`);
