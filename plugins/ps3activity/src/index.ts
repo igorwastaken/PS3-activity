@@ -3,6 +3,7 @@ import { Activity, Config } from '../../def';
 import { logger } from '@vendetta';
 import Settings from './Settings';
 import { FluxDispatcher } from '@vendetta/metro/common';
+import { requireNativeComponent } from 'react-native';
 
 enum ActivityTypes {
   PLAYING = 0,
@@ -46,7 +47,7 @@ async function setActivity(activity: Activity) {
   });
 }
 
-async function fetchGameInfo(baseUrl: string): Promise<string | null> {
+export async function fetchGameInfo(baseUrl: string): Promise<string | null> {
   try {
     const resp = await fetch(`${baseUrl}/klic.ps3`);
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
@@ -62,7 +63,18 @@ export function getGameName(text: string): string[] {
   const match = text.match(/<h2>(.*?)<\/H2>/);
   return match;
 }
-
+export async function fetchPlayTime(baseUrl: string) {
+  try {
+    const resp = await fetch(`${baseUrl}/popup.ps3@info12`);
+    if (!resp.ok) throw new Error(`Status ${resp.status}`);
+    const text = await resp.text();
+    const match = text.match(/<\/div>Play\:(.*?)/);
+    return match[0];
+  } catch (e) {
+    logger.error(e);
+    return null;
+  }
+}
 async function updateActivity() {
   const { console_ip } = storage.selections[storage.selected];
   const baseUrl = `http://${console_ip}`;
@@ -70,7 +82,11 @@ async function updateActivity() {
     // Ping para garantir que o console está online
     const ping = await fetch(baseUrl);
     if (!ping.ok) throw new Error('Ping failed');
-
+    const getPlayTime = await fetchPlayTime(baseUrl);
+    if (!getPlayTime) {
+      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
+      return;
+    }
     // Busca o jogo atual
     const info = await fetchGameInfo(baseUrl);
     if (!info) {
@@ -79,18 +95,21 @@ async function updateActivity() {
       return;
     }
     var gameName = ["0", "XMB"];
+    var playTime = "0";
     const getName = getGameName(info)[0];
-    if(!getName) {
-      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1<<0})
+    if (!getName) {
+      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 << 0 })
       return;
     }
 
     logger.info(getName);
     // brainrot code
+    playTime = getPlayTime;
+    console.log(playTime)
     gameName = getName
-               .replace(/<h2>/, "")
-               .replace(/<\/H2>/, "")
-               .split(" ");
+      .replace(/<h2>/, "")
+      .replace(/<\/H2>/, "")
+      .split(" ");
     var [prefix, ...nameParts] = gameName;
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
