@@ -114,7 +114,7 @@ async function updateActivity() {
 
     const date = toTimeStamp(playTime);
     const calcPlay = Math.floor((Date.now() - date) / 1000);
-    logger.info(calcPlay);
+    // logger.info(calcPlay);
     logger.info(date)
     gameName = getName
       .replace(/<h2>/, "")
@@ -123,7 +123,7 @@ async function updateActivity() {
     var [prefix, ...nameParts] = gameName;
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
-    await setActivity({ name: gameName[1], timestamps: { start: (date/1000) }, /*assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix },*/ type: ActivityTypes.PLAYING, flags: 1 });
+    await setActivity({ name: gameName[1], timestamps: { start: date }, /*assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix },*/ type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
     logger.log(`[PS3] updateActivity error: ${e}`);
