@@ -75,6 +75,16 @@ export async function fetchPlayTime(baseUrl: string) {
     return null;
   }
 }
+export function toMS(duration: string) {
+  let holder = duration.split(":");
+  var m = parseInt(holder[0]);
+  holder = holder[1].split(".");
+  var s = parseInt(holder[0]);
+  var ms = parseInt(holder[1]);
+
+  var milliseconds = (m * 60 + s) * 1000 + ms
+  return milliseconds;
+}
 async function updateActivity() {
   const { console_ip } = storage.selections[storage.selected];
   const baseUrl = `http://${console_ip}`;
@@ -105,8 +115,8 @@ async function updateActivity() {
     logger.info(getName);
     // brainrot code
     playTime = getPlayTime;
-    const date = new Date(playTime).getTime();
-    const calcPlay = Math.floor((Date.now() - date)/1000);
+    const date = toMS(playTime);
+    const calcPlay = Math.floor((Date.now() - date) / 1000);
     logger.info(calcPlay);
     logger.info(date)
     gameName = getName
