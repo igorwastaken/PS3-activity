@@ -112,7 +112,7 @@ async function updateActivity() {
     logger.info(getName);
     // brainrot code
 
-    const date = toTimeStamp(playTime);
+    const date = toTimeStamp(playTime) / 1000;
     const calcPlay = Math.floor((Date.now() - date) / 1000);
     // logger.info(calcPlay);
     logger.info(date)
