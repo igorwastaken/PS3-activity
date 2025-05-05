@@ -108,7 +108,7 @@ async function updateActivity() {
     const date = new Date(playTime).getTime();
     const calcPlay = Math.floor((Date.now() - date)/1000);
     logger.info(calcPlay);
-    logger.info(playTime)
+    logger.info(date)
     gameName = getName
       .replace(/<h2>/, "")
       .replace(/<\/H2>/, "")
