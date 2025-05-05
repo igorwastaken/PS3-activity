@@ -105,7 +105,7 @@ async function updateActivity() {
       return;
     }
     var gameName = ["0", "XMB"];
-    var playTime = "0";
+    var playTime = getPlayTime;
     const getName = getGameName(info)[0];
     if (!getName) {
       await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 << 0 })
@@ -114,7 +114,7 @@ async function updateActivity() {
 
     logger.info(getName);
     // brainrot code
-    playTime = getPlayTime;
+  
     const date = toMS(playTime);
     const calcPlay = Math.floor((Date.now() - date) / 1000);
     logger.info(calcPlay);
