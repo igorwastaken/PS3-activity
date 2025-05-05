@@ -82,6 +82,19 @@ export function toTimeStamp(duration: string) {
   date.setHours(hours, minutes, seconds, 0); // atualiza apenas o horário
   return date.getTime();
 }
+export function parseDuration(timeStr: string): number {
+  const parts = timeStr.split(':').map(Number);
+  if (parts.length === 3) {
+    const [hours, minutes, seconds] = parts;
+    return hours * 3600 + minutes * 60 + seconds;
+  } else if (parts.length === 2) {
+    const [minutes, seconds] = parts;
+    return minutes * 60 + seconds;
+  } else {
+    return 0;
+  }
+}
+
 async function updateActivity() {
   const { console_ip } = storage.selections[storage.selected];
   const baseUrl = `http://${console_ip}`;
@@ -112,8 +125,8 @@ async function updateActivity() {
     logger.info(getName);
     // brainrot code
 
-    const date = toTimeStamp(playTime) / 1000;
-    const calcPlay = Math.floor((Date.now() - date) / 1000);
+    const date = parseDuration(playTime);
+    const calcPlay = Math.floor((Date.now() / 1000) - 1000);
     // logger.info(calcPlay);
     logger.info(date)
     gameName = getName
