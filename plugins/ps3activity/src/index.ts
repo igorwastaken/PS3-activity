@@ -75,12 +75,11 @@ export async function fetchPlayTime(baseUrl: string) {
     return null;
   }
 }
-export function toTimeStamp(duration: string) {
-  const date = new Date(); // usa a data atual
-  const [hours, minutes, seconds] = duration.split(":").map(Number);
+export function parseTimestamp(timestamp: number): number {
+  const hrs = Math.floor(timestamp / 60)
+  const mins = timestamp % 60
 
-  date.setHours(hours, minutes, seconds, 0); // atualiza apenas o horário
-  return date.getTime();
+  return new Date().setHours(hrs, mins, 0, 0)
 }
 export function parseDuration(timeStr: string): number {
   const parts = timeStr.split(':').map(Number);
@@ -126,7 +125,7 @@ async function updateActivity() {
     // brainrot code
 
     const date = parseDuration(playTime);
-    const calcPlay = Math.floor(Date.now());
+    const calcPlay = Date.now() - date;
     logger.info(calcPlay);
     logger.info(date)
     gameName = getName
@@ -136,7 +135,7 @@ async function updateActivity() {
     var [prefix, ...nameParts] = gameName;
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
-    await setActivity({ name: gameName[1], /*assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix },*/ type: ActivityTypes.PLAYING, flags: 1 });
+    await setActivity({ name: gameName[1], timestamps: { start: calcPlay }, /*assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix },*/ type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
     logger.log(`[PS3] updateActivity error: ${e}`);

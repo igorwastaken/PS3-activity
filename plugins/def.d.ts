@@ -37,8 +37,8 @@ export interface Activity {
     state?: string;
     details?: string;
     timestamps?: {
-        start?: number;
-        end?: number;
+        start?: string | number;
+        end?: string | number;
     };
     assets?: {
         large_image?: string;
