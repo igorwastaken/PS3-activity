@@ -135,7 +135,7 @@ async function updateActivity() {
     var [prefix, ...nameParts] = gameName;
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
-    await setActivity({ name: gameName[1], assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix, small_image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F11%2FPlayStation-Logo1994-2009.png&f=1&ipt=db146efe4c6f8cb8677ae0de6e571d4c665fcebf5ef423130242809d076581c1", small_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 });
+    await setActivity({ name: gameName[1], assets: { large_image: `mp:https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix, small_image: "mp:https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flogos-world.net%2Fwp-content%2Fuploads%2F2020%2F11%2FPlayStation-Logo1994-2009.png&f=1&ipt=db146efe4c6f8cb8677ae0de6e571d4c665fcebf5ef423130242809d076581c1", small_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 });
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
     logger.log(`[PS3] updateActivity error: ${e}`);
