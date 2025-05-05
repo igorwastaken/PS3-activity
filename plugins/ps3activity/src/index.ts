@@ -126,8 +126,8 @@ async function updateActivity() {
     // brainrot code
 
     const date = parseDuration(playTime);
-    const calcPlay = Math.floor((Date.now() / 1000) - 1000);
-    // logger.info(calcPlay);
+    const calcPlay = Math.floor((Date.now() / 1000) - date);
+    logger.info(calcPlay);
     logger.info(date)
     gameName = getName
       .replace(/<h2>/, "")
