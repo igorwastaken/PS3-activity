@@ -30,10 +30,10 @@ function createDefaultSelection(): Config {
 let intervalId = null;
 
 async function setActivity(activity: Activity) {
-  FluxDispatcher.dispatch({
+  var act = FluxDispatcher.dispatch({
     type: 'LOCAL_ACTIVITY_UPDATE',
     activity: {
-      application_id: '0',
+      application_id: '1369465791132729425',
       name: activity.name,
       type: activity.type,
       details: activity.details,
@@ -45,6 +45,8 @@ async function setActivity(activity: Activity) {
     pid: 1608,
     socketId: 'PS3Activity@Vendetta'
   });
+  logger.info(act);
+  return act;
 }
 
 export async function fetchGameInfo(baseUrl: string): Promise<string | null> {
