@@ -71,6 +71,7 @@ export async function fetchPlayTime(baseUrl: string) {
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const text = await resp.text();
     const match = text.match(/<\/div>Play: (.*?)<div (.*?)>/);
+    if(!match[1]) return;
     return match[1];
   } catch (e) {
     logger.error(e);
@@ -105,21 +106,21 @@ async function updateActivity() {
     if (!ping.ok) throw new Error('Ping failed');
     const getPlayTime = await fetchPlayTime(baseUrl);
     if (!getPlayTime) {
-      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
+      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 << 0 });
       return;
     }
     // Busca o jogo atual
     const info = await fetchGameInfo(baseUrl);
     if (!info) {
       // Se não há jogo, limpa status
-      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
+      await setActivity({ name: 'PlayStation 3', details: "XMB", assets: {large_image: "https://logos-world.net/wp-content/uploads/2020/11/PlayStation-Logo.png", large_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0 });
       return;
     }
     var gameName = ["0", "XMB"];
     var playTime = getPlayTime;
     const getName = getGameName(info)[0];
     if (!getName) {
-      await setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 << 0 })
+      await setActivity({ name: 'PlayStation 3', details: "XMB", assets: {large_image: "https://logos-world.net/wp-content/uploads/2020/11/PlayStation-Logo.png", large_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0 });
       return;
     }
 
@@ -138,7 +139,7 @@ async function updateActivity() {
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
     logger.info(prefix)
-    await setActivity({ name: "PlayStation 3", details: gameName[1], assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix, small_image: "https://logos-world.net/wp-content/uploads/2020/11/PlayStation-Logo.png", small_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 });
+    await setActivity({ name: "PlayStation 3", details: gameName[1], assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix, small_image: "https://logos-world.net/wp-content/uploads/2020/11/PlayStation-Logo.png", small_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0});
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
     logger.log(`[PS3] updateActivity error: ${e}`);
