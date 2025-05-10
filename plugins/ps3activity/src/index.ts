@@ -113,14 +113,14 @@ async function updateActivity() {
     const info = await fetchGameInfo(baseUrl);
     if (!info) {
       // Se não há jogo, limpa status
-      await setActivity({ name: 'PlayStation 3', details: "XMB", assets: {large_image: "https://logos-world.net/wp-content/uploads/2020/11/PlayStation-Logo.png", large_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0 });
+      await setActivity({ name: 'PlayStation 3', details: "XMB", assets: {large_image: "https://www.pngplay.com/wp-content/uploads/13/Playstation-Logo-Transparent-File.png", large_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0 });
       return;
     }
     var gameName = ["0", "XMB"];
     var playTime = getPlayTime;
     const getName = getGameName(info)[0];
     if (!getName) {
-      await setActivity({ name: 'PlayStation 3', details: "XMB", assets: {large_image: "https://logos-world.net/wp-content/uploads/2020/11/PlayStation-Logo.png", large_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0 });
+      await setActivity({ name: 'PlayStation 3', details: "XMB", assets: {large_image: "https://www.pngplay.com/wp-content/uploads/13/Playstation-Logo-Transparent-File.png", large_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0 });
       return;
     }
 
@@ -139,9 +139,10 @@ async function updateActivity() {
     const namePartsJoin = nameParts.join(" ");
     gameName = [prefix, namePartsJoin];
     logger.info(prefix)
-    await setActivity({ name: "PlayStation 3", details: gameName[1], assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix, small_image: "https://logos-world.net/wp-content/uploads/2020/11/PlayStation-Logo.png", small_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0});
+    await setActivity({ name: "PlayStation 3", details: gameName[1], assets: { large_image: `https://raw.githubusercontent.com/aldostools/Resources/refs/heads/main/COV/${prefix}.JPG`, large_text: prefix, small_image: "https://www.pngplay.com/wp-content/uploads/13/Playstation-Logo-Transparent-File.png", small_text: "PlayStation" }, type: ActivityTypes.PLAYING, flags: 1 << 0});
     logger.log(`[PS3] Now playing: ${gameName}`);
   } catch (e) {
+    await setActivity({ name: "", details: "", assets: {}, flags: 1<<0 })
     logger.log(`[PS3] updateActivity error: ${e}`);
   }
 }
@@ -156,7 +157,7 @@ export default {
   onUnload() {
     logger.log('[PS3] Plugin unloaded');
     if (intervalId) clearInterval(intervalId);
-    setActivity({ name: '', type: ActivityTypes.PLAYING, flags: 1 });
+    setActivity({ name: '', flags: 1 << 0 });
   },
 
   settings: Settings
